@@ -7,6 +7,25 @@ Class {
 }
 
 { #category : 'tests' }
+SimpleTOCGeneratorTest >> testHtmlTOCWithLinks [
+	| miniDoc vis html |
+	miniDoc := '# Microdown
+# Architecture
+## Visitors
+## A builder'.
+
+	vis := SimpleTOCGenerator new.
+	vis showOnlyAbove: 1.
+	vis visit: (Microdown parse: miniDoc).
+
+	html := vis htmlTOC.
+
+	self assert: (html includesSubstring: '<a href="#microdown">Microdown</a>').
+	self assert: (html includesSubstring: '<a href="#architecture">Architecture</a>').
+
+]
+
+{ #category : 'tests' }
 SimpleTOCGeneratorTest >> testMicrodownTOCFromExistingTOC [
 	| miniDoc vis |
 	miniDoc := '# Microdown

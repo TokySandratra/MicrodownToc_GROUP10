@@ -5,17 +5,49 @@ Class {
 		'contents',
 		'minLevel',
 		'numberingEnabled',
-		'currentNumber'
+		'currentNumber',
+		'entries'
 	],
 	#category : 'Microdown-Visitor',
 	#package : 'Microdown',
 	#tag : 'Visitor'
 }
 
+{ #category : 'as yet unclassified' }
+SimpleTOCGenerator >> anchorFromTitle: aString [
+	^ '#' , ((aString asLowercase copyReplaceAll: ' ' with: '-'))
+
+]
+
 { #category : 'initialization' }
 SimpleTOCGenerator >> contents [ 
 	^ contents contents 
 	
+]
+
+{ #category : 'accessing' }
+SimpleTOCGenerator >> entries [
+    ^ entries
+]
+
+{ #category : 'as yet unclassified' }
+SimpleTOCGenerator >> htmlTOC [
+    | builder |
+    builder := String new writeStream.
+    builder nextPutAll: '<ul>'; cr.
+
+    entries do: [ :each |
+        builder nextPutAll: '<li>';
+            nextPutAll: '<a href="';
+            nextPutAll: each link;
+            nextPutAll: '">';
+            nextPutAll: each title;
+            nextPutAll: '</a>';
+            nextPutAll: '</li>'; cr ].
+
+    builder nextPutAll: '</ul>'.
+    ^ builder contents
+
 ]
 
 { #category : 'initialization' }
@@ -24,7 +56,8 @@ SimpleTOCGenerator >> initialize [
 	contents := String new writeStream.
 	minLevel := 0.
 	numberingEnabled := false.
-	currentNumber := 0
+	currentNumber := 0.
+	entries := OrderedCollection new
 ]
 
 { #category : 'as yet unclassified' }
@@ -60,6 +93,13 @@ SimpleTOCGenerator >> visitHeader: aHeader [
 	| level |
 	level := aHeader level.
 	(minLevel = 0 or: [level <= minLevel ]) ifTrue: [
+		"Créer une entrée de TOC"
+       entries add: (TocEntry new
+            title: aHeader header;
+            level: level;
+				link: (self anchorFromTitle: aHeader header);
+            yourself).
+
 		contents cr.
 		
 		numberingEnabled 
