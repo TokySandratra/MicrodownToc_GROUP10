@@ -7,6 +7,46 @@ Class {
 }
 
 { #category : 'tests' }
+SimpleTOCGeneratorTest >> testTOCNumberedWithFilter [
+	| miniDoc vis |
+	miniDoc := '# Microdown
+## Architecture
+### Visitors
+### A builder'.
+
+	vis := SimpleTOCGenerator new.
+	vis showOnlyAbove: 1.
+	vis numbered.
+	vis visit: (Microdown parse: miniDoc).
+
+	self assert: vis contents equals: '
+1 Architecture
+2 Visitors
+3 A builder'
+
+]
+
+{ #category : 'tests' }
+SimpleTOCGeneratorTest >> testTOCNumberedWithoutFilter [
+	| miniDoc vis |
+	miniDoc := '# Microdown
+## Architecture
+### Visitors
+### A builder'.
+
+	vis := SimpleTOCGenerator new.
+	vis numbered.
+	vis visit: (Microdown parse: miniDoc).
+
+	self assert: vis contents equals: '
+1 Microdown
+2 Architecture
+3 Visitors
+4 A builder'
+
+]
+
+{ #category : 'tests' }
 SimpleTOCGeneratorTest >> testTOCWithFilter [ "Avec un level comme parametre"
 	| miniDoc vis |
 	miniDoc := '# Microdown

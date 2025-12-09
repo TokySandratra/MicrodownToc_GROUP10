@@ -3,7 +3,9 @@ Class {
 	#superclass : 'MicrodownVisitor',
 	#instVars : [
 		'contents',
-		'minLevel'
+		'minLevel',
+		'numberingEnabled',
+		'currentNumber'
 	],
 	#category : 'Microdown-Visitor',
 	#package : 'Microdown',
@@ -21,6 +23,13 @@ SimpleTOCGenerator >> initialize [
 	super initialize. 
 	contents := String new writeStream.
 	minLevel := 0.
+	numberingEnabled := false.
+	currentNumber := 0
+]
+
+{ #category : 'as yet unclassified' }
+SimpleTOCGenerator >> numbered [
+	numberingEnabled := true
 ]
 
 { #category : 'initialization' }
@@ -35,12 +44,23 @@ SimpleTOCGenerator >> visitHeader: aHeader [
 	(level > minLevel) ifTrue: [
 		contents cr.
 		
-		"Indentation en fonction du niveau"
-		1 to: level - 1 do: [ :i | contents nextPutAll: '  ' ].
+		numberingEnabled 
+			ifTrue: [ 
+				currentNumber := currentNumber + 1.
+				contents
+					nextPutAll: currentNumber asString;
+					nextPut: Character space;
+					nextPutAll: aHeader header
+				 ]
+			ifFalse: [ 
+				"Version de TOC indenté"
+				1 to: level - 1 do: [ :i | contents nextPutAll: '  ' ].
+				"Texte du titre "
+				contents nextPutAll: aHeader header ]  "ou aHeader text, aHeader label..."
+			].
+		
 
-		"Texte du titre (adapte la méthode selon ce que fournit ta classe de header)"
-		contents nextPutAll: aHeader header ].  "ou aHeader text, aHeader label..."
-
+		
 	"On continue à visiter les enfants comme dans MicrodownVisitor"
 	aHeader headerElements do: [ :each | each accept: self ]
 
