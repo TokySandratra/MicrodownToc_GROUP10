@@ -72,7 +72,7 @@ MicMicrodownTextualBuilder >> annotation: aString arguments: aDictionary [
 MicMicrodownTextualBuilder >> bold: aBlock [
 	self raw: BoldMarkup.
 	aBlock value.
-	self raw: BoldMarkup.
+	self raw: BoldMarkup
 ]
 
 { #category : 'accessing' }
