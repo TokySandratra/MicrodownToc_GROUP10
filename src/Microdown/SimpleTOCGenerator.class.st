@@ -28,6 +28,24 @@ SimpleTOCGenerator >> initialize [
 ]
 
 { #category : 'as yet unclassified' }
+SimpleTOCGenerator >> microdownTOC [
+	| builder |
+	builder := String new writeStream.
+
+	(self contents lines) do: [ :eachLine |
+		| trimmed |
+		trimmed := eachLine trimBoth.
+		trimmed isEmpty ifFalse: [
+			builder
+				cr;
+				nextPutAll: '# ';
+				nextPutAll: trimmed ] ].
+
+	^ builder contents
+
+]
+
+{ #category : 'as yet unclassified' }
 SimpleTOCGenerator >> numbered [
 	numberingEnabled := true
 ]
@@ -41,7 +59,7 @@ SimpleTOCGenerator >> showOnlyAbove: aLevel [
 SimpleTOCGenerator >> visitHeader: aHeader [
 	| level |
 	level := aHeader level.
-	(level > minLevel) ifTrue: [
+	(minLevel = 0 or: [level <= minLevel ]) ifTrue: [
 		contents cr.
 		
 		numberingEnabled 

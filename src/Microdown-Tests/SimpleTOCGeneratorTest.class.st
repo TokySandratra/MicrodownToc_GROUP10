@@ -7,12 +7,30 @@ Class {
 }
 
 { #category : 'tests' }
+SimpleTOCGeneratorTest >> testMicrodownTOCFromExistingTOC [
+	| miniDoc vis |
+	miniDoc := '# Microdown
+# Architecture
+## Visitors
+## A builder'.
+
+	vis := SimpleTOCGenerator new.
+	vis showOnlyAbove: 1.
+	vis visit: (Microdown parse: miniDoc).
+
+	self assert: vis microdownTOC equals: '
+# Microdown
+# Architecture'
+
+]
+
+{ #category : 'tests' }
 SimpleTOCGeneratorTest >> testTOCNumberedWithFilter [
 	| miniDoc vis |
 	miniDoc := '# Microdown
-## Architecture
-### Visitors
-### A builder'.
+# Architecture
+## Visitors
+## A builder'.
 
 	vis := SimpleTOCGenerator new.
 	vis showOnlyAbove: 1.
@@ -20,9 +38,8 @@ SimpleTOCGeneratorTest >> testTOCNumberedWithFilter [
 	vis visit: (Microdown parse: miniDoc).
 
 	self assert: vis contents equals: '
-1 Architecture
-2 Visitors
-3 A builder'
+1 Microdown
+2 Architecture'
 
 ]
 
@@ -50,18 +67,17 @@ SimpleTOCGeneratorTest >> testTOCNumberedWithoutFilter [
 SimpleTOCGeneratorTest >> testTOCWithFilter [ "Avec un level comme parametre"
 	| miniDoc vis |
 	miniDoc := '# Microdown
-## Architecture
-### Visitors
-### A builder'.
+# Architecture
+## Visitors
+## A builder'.
 
 	vis := SimpleTOCGenerator new.
 	vis showOnlyAbove: 1.
 	vis visit: (Microdown parse: miniDoc).
 
 	self assert: vis contents equals: '
-  Architecture
-    Visitors
-    A builder'
+Microdown
+Architecture'
 
 ]
 
