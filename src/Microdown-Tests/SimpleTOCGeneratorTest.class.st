@@ -118,3 +118,20 @@ Microdown
     A builder'
 
 ]
+
+{ #category : 'tests - duplicates' }
+SimpleTOCGeneratorTest >> testTOCHandlesDuplicateTitles [
+	| miniDoc vis anchors |
+	miniDoc := '# Intro
+# Intro
+## Details'.
+
+	vis := SimpleTOCGenerator new.
+	vis visit: (Microdown parse: miniDoc).
+
+	anchors := (vis entries collect: [:e | e link ]).
+	"attend 3 anchors (2 h1 + 1 h2)"
+	self assert: anchors size = 3.
+	"Verif qu’il y a 3 anchors attendus (2 h1 + 1 h2) et qu'ils sont unique"
+	self assert: (anchors asSet size = anchors size).
+]
